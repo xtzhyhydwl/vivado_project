@@ -23,7 +23,7 @@ make -C ps7_cortexa9_0/libsrc/uartps_v3_5/src -s libs  "SHELL=CMD" "COMPILER=arm
 make -C ps7_cortexa9_0/libsrc/xadcps_v2_2/src -s libs  "SHELL=CMD" "COMPILER=arm-none-eabi-gcc" "ARCHIVER=arm-none-eabi-ar" "COMPILER_FLAGS=  -O2 -c" "EXTRA_COMPILER_FLAGS=-mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -nostartfiles -Wall -Wextra"
 "Compiling xadcps"
 'Finished building libraries'
-12:23:46 **** Build of configuration Debug for project light_sensor ****
+14:51:36 **** Build of configuration Debug for project light_sensor ****
 make pre-build main-build 
 a9-linaro-pre-build-step
 ' '
@@ -45,10 +45,15 @@ arm-none-eabi-gcc -mcpu=cortex-a9 -mfpu=vfpv3 -mfloat-abi=hard -Wl,-build-id=non
 'Invoking: ARM v7 Print Size'
 arm-none-eabi-size light_sensor.elf  |tee "light_sensor.elf.size"
    text	   data	    bss	    dec	    hex	filename
-  29452	   1172	  22600	  53224	   cfe8	light_sensor.elf
+  29708	   1172	  22600	  53480	   d0e8	light_sensor.elf
 'Finished building: light_sensor.elf.size'
 ' '
-12:24:01 **** Incremental Build of configuration Debug for project light_sensor ****
+14:52:15 **** Incremental Build of configuration Debug for project light_sensor ****
+make pre-build main-build 
+a9-linaro-pre-build-step
+' '
+make: Nothing to be done for `main-build'.
+14:52:22 **** Incremental Build of configuration Debug for project light_sensor ****
 make pre-build main-build 
 a9-linaro-pre-build-step
 ' '

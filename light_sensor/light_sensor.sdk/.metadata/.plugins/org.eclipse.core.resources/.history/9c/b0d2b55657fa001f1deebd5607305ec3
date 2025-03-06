@@ -31,21 +31,6 @@ void volt_printfloat(float num)
 	a = (temp-b*10-c)/100;
     p[0] = a+'0';p[1] =0x2e;p[2]=b+'0';p[3]=c+'0';p[4]='\0';//转ASCII
 	xil_printf("volt = %s;\n\r",p);
-	if (num > 1.8f) {
-		print("亮度：非常亮\r");
-	}
-	else if (num > 1.2f) {
-		print("亮度：较亮\r");
-	}
-	else if (num > 0.8f) {
-		print("亮度：一般\r");
-	}
-	else if (num > 0.4f) {
-		print("亮度：较暗\r");
-	}
-	else {
-		print("亮度：很暗\r");
-	}
 }
 int main()
 {
