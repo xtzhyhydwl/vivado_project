@@ -1,0 +1,5 @@
+set_property SRC_FILE_INFO {cfile:C:/Users/MikanseiP/Desktop/zonghekechengsheji/barometer_sensor/sensor_Barometer.xdc rfile:../../../sensor_Barometer.xdc id:1} [current_design]
+set_property src_info {type:XDC file:1 line:3 export:INPUT save:INPUT read:READ} [current_design]
+set_property PACKAGE_PIN Y19 [get_ports IIC_1_scl_io]
+set_property src_info {type:XDC file:1 line:4 export:INPUT save:INPUT read:READ} [current_design]
+set_property PACKAGE_PIN AA19 [get_ports IIC_1_sda_io]

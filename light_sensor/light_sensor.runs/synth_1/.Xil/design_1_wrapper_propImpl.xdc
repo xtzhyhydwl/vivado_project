@@ -1,0 +1,5 @@
+set_property SRC_FILE_INFO {cfile:C:/Users/MikanseiP/Desktop/zonghekechengsheji/light_sensor/light_sensor.srcs/constrs_1/new/light_sensor.xdc rfile:../../../light_sensor.srcs/constrs_1/new/light_sensor.xdc id:1} [current_design]
+set_property src_info {type:XDC file:1 line:1 export:INPUT save:INPUT read:READ} [current_design]
+set_property IOSTANDARD LVCMOS33 [get_ports Vaux11_v_p]
+set_property src_info {type:XDC file:1 line:2 export:INPUT save:INPUT read:READ} [current_design]
+set_property IOSTANDARD LVCMOS33 [get_ports Vaux11_v_n]
