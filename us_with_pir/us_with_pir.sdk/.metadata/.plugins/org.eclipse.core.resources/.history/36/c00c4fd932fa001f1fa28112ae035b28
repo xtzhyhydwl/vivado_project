@@ -1,0 +1,107 @@
+/*
+ * test.c
+ *
+ *  Created on: 2020年11月14日
+ *      Author: Administrator
+ */
+#include "xil_io.h"
+#include"xil_printf.h"//有输出语句就要用到
+#include "xtime_l.h"
+#include "sleep.h"
+#define PIR_BASEADDR 0x41210000 //地址可能不同
+#define LED_BASEADDR 0x41200000 //地址可能不同
+#define ULT_BASEADDR 0x41220000 //地址可能不同
+
+#define TRI_OFFSET 0x4
+#define printf xil_printf
+float ULTdis = 0;
+XTime OutTimeBegin,OutTimeEnd;
+XTime begin,end;
+int ult_status = 0;
+int pir_status = 0;
+
+// Xil_In32(PIR_BASEADDR)
+
+void CheckIfOutTime();
+void LED();
+int ULTSonnic();
+void status_refresh();
+
+int main()
+{
+	while(1)
+	{
+		status_refresh();
+		LED();
+		if (ult_status == 1) {
+			if (ULTdis == -1){
+				printf("测距失败:超时.\r\n");
+			}
+			else {
+				ULTdis = ULTSonnic();
+				if(ULTdis>400*58)
+				{
+					printf("测距失败:超出量程或未接收到返回脉冲.\r\n");
+				}
+				else
+					printf("测得距离为：%d cm\n",(int)ULTdis/58);
+			}
+			ult_status = 0;
+		}
+	    //    sleep(1);
+	}
+	return 0;
+}
+
+void status_refresh()
+{
+	pir_status = Xil_In32(PIR_BASEADDR);
+	if (pir_status == 1)
+	{
+		printf("检测到移动物体\r\n");
+		ult_status = 1;
+	}
+	else
+	{
+		printf("未检测到移动物体\r\n");
+		ult_status = 0;
+	}
+}
+
+void LED()
+{
+	int temp = 0;
+	temp = pir_status << 1 | ult_status;
+	Xil_Out32(LED_BASEADDR,temp);
+}
+
+int ULTSonnic(){
+	//配置GPIO为输出模式用于启动超声波
+	Xil_Out32(ULT_BASEADDR+TRI_OFFSET,0x0);
+	//2us低，5us高,再拉低
+	Xil_Out32(ULT_BASEADDR,0x0);
+	usleep(2);
+	Xil_Out32(ULT_BASEADDR,0x1);
+	usleep(5);
+	Xil_Out32(ULT_BASEADDR,0x0);
+	//配置GPIO为输入模式用于接收返回脉冲
+	Xil_Out32(ULT_BASEADDR+TRI_OFFSET,0x1);
+	XTime_GetTime(&OutTimeBegin);
+    while(!Xil_In32(ULT_BASEADDR)){
+    	CheckIfOutTime();
+    }
+    XTime_GetTime(&begin);
+    while(Xil_In32(ULT_BASEADDR)){
+    	CheckIfOutTime();
+    }
+    XTime_GetTime(&end);
+    return 1000000*(end-begin)/(XPAR_CPU_CORTEXA9_CORE_CLOCK_FREQ_HZ /2);//返回us
+}
+
+void CheckIfOutTime()
+{
+	int OUTTIME = XPAR_CPU_CORTEXA9_CORE_CLOCK_FREQ_HZ /2;//1s,CPU频率的一半
+	XTime_GetTime(OutTimeEnd);
+	if(OutTimeEnd-OutTimeBegin>OUTTIME)
+		ULTdis = -1;
+}
