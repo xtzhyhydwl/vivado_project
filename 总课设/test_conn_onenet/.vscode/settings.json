@@ -1,0 +1,9 @@
+{
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/haos/Documents/onenet/test_conn_onenet",
+            "binaryPath": "/home/haos/Documents/onenet/test_conn_onenet/test",
+            "binaryArgs": []
+        }
+    ]
+}
