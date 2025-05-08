@@ -1,3 +1,9 @@
+/*
+ * @Date: 2025-05-06 21:57:10
+ * @LastEditors: xiayuan 1137542776@qq.com
+ * @LastEditTime: 2025-05-06 21:57:12
+ * @FilePath: \undefinedd:\zonghekechensheji\总课设\test_conn_onenet\sources\test.c
+ */
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -52,9 +58,9 @@ int start_count = 0;
 int recording_count = 0;
 int end_count = 0;
 state_t STATE = IDLE;
-double mean_filter_pir_buffer[PIR_WINDOW] = {0};
+
 double mean_filter_ult_buffer[ULT_WINDOW] = {0};
-int mean_filter_index_pir = 0;
+
 int mean_filter_index_ult = 0;
 double pir_value_mean = 0;
 double ult_value_mean = 0;
@@ -62,6 +68,8 @@ int alarm_count = 0;
 int alarm_flag = 0;
 double sitting_time = 0;
 
+int mean_filter_index_pir = 0;
+double mean_filter_pir_buffer[PIR_WINDOW] = {0};
 double mean_filter_pir(int pir_value) {  //对PIR取值进行均值滤波
 	if (pir_value < 0) { // 检查输入值是否有效
         pir_value = 0;
@@ -78,7 +86,7 @@ double mean_filter_pir(int pir_value) {  //对PIR取值进行均值滤波
 	return (double)sum / PIR_WINDOW;
 }
 
-double mean_filter_ult(int ult_value) {  //对PIR取值进行均值滤波
+double mean_filter_ult(int ult_value) {  //对ult取值进行均值滤波
 	if (ult_value < 0) { // 检查输入值是否有效
         ult_value = 0;
     }
@@ -158,7 +166,7 @@ int main()
 			// if (in_position_detect(ult_dis, pir_value)) {
 			// 	start_count++;
 			// }
-			if (in_position_detect_mean_filter(ult_value_mean, pir_value_mean)) {  //使用pir均值滤波进行判断
+			if (in_position_detect_mean_filter(ult_value_mean, pir_value_mean)) {  //使用均值滤波进行判断
 				start_count++;
 			}
 			else if (start_count > 0) 
@@ -178,11 +186,7 @@ int main()
 				STATE = ALARM;
 				
 			}			
-			// if (!in_position_detect(ult_dis, pir_value)) {
-			// 	end_count++;
-			// 	printf("OUT OF POSITION! END COUNT: %d\n", end_count);
-			// }
-			if (!in_position_detect_mean_filter(ult_value_mean, pir_value_mean)) {  //使用pir均值滤波进行判断
+			if (!in_position_detect_mean_filter(ult_value_mean, pir_value_mean)) {  //使用均值滤波进行判断
 				end_count++;
 				printf("OUT OF POSITION! END COUNT: %d\n", end_count);
 			}
@@ -201,7 +205,7 @@ int main()
 			alarm_flag = 1;
 			if (alarm_count < 100) {
 				alarm_count++;
-				printf("SITTING FOR TOO LONG, ALARM\nSTATE GOES TO IDLE\n");
+				printf("SITTING FOR TOO LONG, ALARM\n");
 			} else if (alarm_count >= 100) {
 				alarm_count = 0;
 				STATE = IDLE;
@@ -225,13 +229,10 @@ int main()
 			break;
 		}
 		print_all_state(ult_dis, pir_value);
-
-	 	// ult_len = get_ult_len(fd_ult);
 		sitting_time = (double)recording_count * 0.1; // 0.1s * count
 		int state1 = (int)STATE;
 		sprintf(msg_buf,"{\'id\':1,\'dp\':{\'state\':[{\'v':\'%d\'}],  \'distance\':[{\'v':\'%.2f\'}], \'pir\':[{\'v':\'%.2f\'}],  \'sitting_time\':[{\'v':\'%.2f\'}],  \'alarm\':[{\'v':\'%d\'}]}}", state1, ult_value_mean, pir_value_mean, sitting_time, alarm_flag);
-		// printf("msg_buf: %s\n", msg_buf);
-		// print_hex(msg_buf, strlen(msg_buf));
+	
 		mqtt_publish(msg_buf);
 
 		usleep(100000); // 0.1 秒
